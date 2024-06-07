@@ -35,11 +35,12 @@ module Firebase
         # @param [String, nil] photo_url The user’s photo URL.
         # @param [String, nil] password The user’s raw, unhashed password.
         # @param [Boolean, nil] disabled A boolean indicating whether or not the user account is disabled.
+        # @param [Hash, nil] custom_claims "Custom attributes" to store on the user, which will appear in their auth token.
         #
         # @raise [CreateUserError] if a user cannot be created.
         #
         # @return [UserRecord]
-        def create_user(uid: nil, display_name: nil, email: nil, email_verified: nil, phone_number: nil, photo_url: nil, password: nil, disabled: nil)
+        def create_user(uid: nil, display_name: nil, email: nil, email_verified: nil, phone_number: nil, photo_url: nil, password: nil, disabled: nil, custom_claims: nil)
           @user_manager.create_user(
             uid: uid,
             display_name: display_name,
@@ -48,7 +49,8 @@ module Firebase
             phone_number: phone_number,
             photo_url: photo_url,
             password: password,
-            disabled: disabled
+            disabled: disabled,
+            custom_claims: custom_claims,
           )
         end
 
@@ -97,11 +99,12 @@ module Firebase
         # @param [String, nil] photo_url The user’s photo URL.
         # @param [String, nil] password The user’s raw, unhashed password.
         # @param [Boolean, nil] disabled A boolean indicating whether or not the user account is disabled.
+        # @param [Hash, nil] custom_claims "Custom attributes" to store on the user, which will appear in their auth token. Set to an empty hash to clear.
         #
         # @raise [UpdateUserError] if a user cannot be updated.
         #
         # @return [UserRecord]
-        def update_user(uid: nil, display_name: nil, email: nil, email_verified: nil, phone_number: nil, photo_url: nil, password: nil, disabled: nil)
+        def update_user(uid: nil, display_name: nil, email: nil, email_verified: nil, phone_number: nil, photo_url: nil, password: nil, disabled: nil, custom_claims: nil)
           @user_manager.update_user(
             uid: uid,
             display_name: display_name,
@@ -110,7 +113,8 @@ module Firebase
             phone_number: phone_number,
             photo_url: photo_url,
             password: password,
-            disabled: disabled
+            disabled: disabled,
+            custom_claims: custom_claims,
           )
         end
 

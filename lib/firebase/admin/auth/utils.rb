@@ -50,6 +50,12 @@ module Firebase
           name
         end
 
+        def validate_custom_claims(claims, required: false)
+          return nil if claims.nil? && !required
+          raise ArgumentError, "custom_claims must be a hash" unless claims.is_a?(Hash)
+          claims
+        end
+
         def to_boolean(val)
           !!val unless val.nil?
         end
