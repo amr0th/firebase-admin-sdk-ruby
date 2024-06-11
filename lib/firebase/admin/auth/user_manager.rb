@@ -42,7 +42,7 @@ module Firebase
             password: validate_password(password),
             emailVerified: to_boolean(email_verified),
             disabled: to_boolean(disabled),
-            custom_claims: validate_custom_claims(custom_claims)&.to_json,
+            customAttributes: validate_custom_claims(custom_claims)&.to_json,
           }.compact
           res = @client.post(with_path("accounts"), payload).body
           uid = res&.fetch("localId")
