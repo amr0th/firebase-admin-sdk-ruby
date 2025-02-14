@@ -54,11 +54,6 @@ module Firebase
             customAttributes: validate_custom_claims(custom_claims)&.to_json,
           }
           res = @client.post(with_path("accounts:update"), claims_attributes)
-
-          Rails.logger.warn(res.inspect.red)
-          Rails.logger.warn("defeefeffeef")
-          Rails.logger.warn("defeefeffeef")
-
           user
         end
 
