@@ -42,12 +42,21 @@ module Firebase
             password: validate_password(password),
             emailVerified: to_boolean(email_verified),
             disabled: to_boolean(disabled),
-            customAttributes: validate_custom_claims(custom_claims)&.to_json,
           }.compact
           res = @client.post(with_path("accounts"), payload).body
           uid = res&.fetch("localId")
+
           raise CreateUserError, "failed to create user #{res}" if uid.nil?
-          get_user_by(uid: uid)
+          user = get_user_by(uid: uid)
+
+          claims_attributes = {
+            localId: uid,
+            customAttributes: validate_custom_claims(custom_claims)&.to_json,
+          }
+
+          @client.post(with_path("accounts:update"), claims_attributes)
+
+          user
         end
 
         # Updates an existing user account with the specified properties.
@@ -80,7 +89,14 @@ module Firebase
           res = @client.post(with_path("accounts:update"), payload).body
           uid = res&.fetch("localId")
           raise UpdateUserError, "failed to update user #{res}" if uid.nil?
-          get_user_by(uid: uid)
+          user = get_user_by(uid: uid)
+
+          claims_attributes = {
+            localId: uid,
+            customAttributes: validate_custom_claims(custom_claims)&.to_json,
+          }
+
+          @client.post(with_path("accounts:update"), claims_attributes)
         end
 
         # Gets the user corresponding to the provided key
@@ -93,11 +109,11 @@ module Firebase
         # @return [UserRecord] A user or nil if not found
         def get_user_by(query)
           if (uid = query[:uid])
-            payload = {localId: Array(validate_uid(uid, required: true))}
+            payload = { localId: Array(validate_uid(uid, required: true)) }
           elsif (email = query[:email])
-            payload = {email: Array(validate_email(email, required: true))}
+            payload = { email: Array(validate_email(email, required: true)) }
           elsif (phone_number = query[:phone_number])
-            payload = {phoneNumber: Array(validate_phone_number(phone_number, required: true))}
+            payload = { phoneNumber: Array(validate_phone_number(phone_number, required: true)) }
           else
             raise ArgumentError, "Unsupported query: #{query}"
           end
@@ -111,7 +127,7 @@ module Firebase
         # @param [String] uid
         #   The id of the user.
         def delete_user(uid)
-          @client.post(with_path("accounts:delete"), {localId: validate_uid(uid, required: true)})
+          @client.post(with_path("accounts:delete"), { localId: validate_uid(uid, required: true) })
         end
 
         private
