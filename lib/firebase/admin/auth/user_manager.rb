@@ -42,12 +42,24 @@ module Firebase
             password: validate_password(password),
             emailVerified: to_boolean(email_verified),
             disabled: to_boolean(disabled),
-            customAttributes: validate_custom_claims(custom_claims)&.to_json,
           }.compact
           res = @client.post(with_path("accounts"), payload).body
           uid = res&.fetch("localId")
+
           raise CreateUserError, "failed to create user #{res}" if uid.nil?
-          get_user_by(uid: uid)
+          user = get_user_by(uid: uid)
+
+          claims_attributes = {
+            localId: uid,
+            customAttributes: validate_custom_claims(custom_claims)&.to_json,
+          }
+          res = @client.post(with_path("accounts:update"), claims_attributes)
+
+          Rails.logger.warn(res.inspect.red)
+          Rails.logger.warn("defeefeffeef")
+          Rails.logger.warn("defeefeffeef")
+
+          user
         end
 
         # Updates an existing user account with the specified properties.
