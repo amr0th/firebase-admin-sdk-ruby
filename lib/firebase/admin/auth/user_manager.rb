@@ -97,6 +97,9 @@ module Firebase
           }
 
           @client.post(with_path("accounts:update"), claims_attributes)
+          user = get_user_by(uid: uid)
+
+          user
         end
 
         # Gets the user corresponding to the provided key
